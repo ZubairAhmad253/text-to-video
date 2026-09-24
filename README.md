@@ -21,6 +21,12 @@ A small website that turns **one photo + some text** into an MP4 video. It is fr
 
 Double-click **`run.bat`**. It opens http://localhost:8000 in your browser. Keep the black window open while you use the site; close it to stop the server.
 
+## Share online (free)
+
+With `run.bat` running, double-click **`share.bat`**. It prints a public link like `https://something.trycloudflare.com` that anyone can open. The link works only while your PC, `run.bat` and the `share.bat` window are all on. You get a new link each time you start it.
+
+This app can't be hosted on Vercel, because it needs a server that keeps running along with FFmpeg and Ollama. To host it properly, use the included `Dockerfile` on any Docker host, such as Render, Railway, a VPS, or a Hugging Face Space (Docker Spaces need HF PRO).
+
 ## How it works
 
 ```
