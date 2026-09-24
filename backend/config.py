@@ -24,7 +24,7 @@ FADE_SECONDS = 0.6     # fade from/to black at the start and end
 CAPTION_FADE = 0.25    # caption fade-in time at the start of each scene
 
 # Story mode: a local Ollama model writes the story, free Hugging Face Spaces animate a few scenes
-OLLAMA_URL = "http://localhost:11434"
+OLLAMA_URL = "http://127.0.0.1:11434"
 STORY_MODEL = "qwen2.5:3b"
 STORY_SCENES = 8        # about 30 seconds of narration (the small model writes short sentences)
 AI_CLIPS = 2            # scenes animated by AI per video; a free HF account gets about 2 clips a day
