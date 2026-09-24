@@ -66,17 +66,12 @@
       <section class="thread" id="thread">
         <div class="thread-inner">
           <div class="welcome" id="welcome">
-            <section class="showcase-card" id="showcase" hidden aria-labelledby="showcase-title">
-              <div class="showcase-note">
-                <span class="badge">Showcase project</span>
-                <h2 id="showcase-title">This demo site can't make videos</h2>
-                <p>Photo to Video needs a server with FFmpeg, an offline voice and a local AI model, and this
-                  copy has no hosting, so the buttons below are switched off. Watch the screen recording to see
-                  what it does when it runs on a PC: a real video from a photo and text, start to finish.
-                  The recording is silent; the sample videos further down have the voice-over.</p>
-              </div>
-              <video class="demo-video" src="samples/demo.mp4" poster="samples/demo.jpg" controls playsinline preload="metadata"></video>
-            </section>
+            <div class="showcase-note" id="showcase" hidden>
+              <span class="badge">Showcase project</span>
+              <p>This copy has no server, so it can't make new videos. Open a video under
+                <b>Recent videos</b> to see what the app makes on a PC.</p>
+              <button type="button" class="pill-btn primary" id="watch-demo">▶ Watch the demo</button>
+            </div>
 
             <div class="hero-logo" aria-hidden="true">
               <svg viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></svg>
@@ -112,23 +107,6 @@
               <div><b>🎞️ Moving scenes</b><span>Zoom, pan and captions for every sentence</span></div>
               <div><b>✨ AI animation</b><span>Story mode makes the photo actually move</span></div>
             </div>
-
-            <section class="samples" aria-labelledby="samples-title">
-              <h2 id="samples-title">Made with Photo to Video</h2>
-              <div class="sample-grid">
-                <figure class="sample">
-                  <video src="samples/panda-story.mp4" poster="samples/panda-story.jpg" controls playsinline preload="none"></video>
-                  <figcaption><b>✨ AI story · 16:9</b> “The panda walks through the jungle, talking to a friend on a mobile phone.”</figcaption>
-                </figure>
-                <figure class="sample">
-                  <video src="samples/panda-classic.mp4" poster="samples/panda-classic.jpg" controls playsinline preload="none"></video>
-                  <figcaption><b>Classic · 1:1</b> Three sentences, three scenes, one voice-over.</figcaption>
-                </figure>
-              </div>
-              <p class="credit">Sample photo: “Grosser Panda” by J. Patrick Fischer,
-                <a href="https://creativecommons.org/licenses/by-sa/3.0" target="_blank" rel="noopener">CC BY-SA 3.0</a>,
-                via <a href="https://commons.wikimedia.org/wiki/File:Grosser_Panda.JPG" target="_blank" rel="noopener">Wikimedia Commons</a>.</p>
-            </section>
           </div>
 
           <div class="messages" id="messages"></div>

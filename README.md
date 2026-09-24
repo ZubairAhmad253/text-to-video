@@ -27,7 +27,7 @@ With `run.bat` running, double-click **`share.bat`**. It prints a public link li
 
 ## Showcase site (Vercel, free)
 
-Vercel hosts a **static showcase copy** of the website. `vercel.json` publishes only the `static/` folder, and `.vercelignore` leaves out the Python code. The showcase has no server, so it can't make videos. When the page can't reach a server, it switches to showcase mode: a banner explains this, the controls are turned off, and a screen recording of the real app (`static/samples/demo.mp4`) plays along with sample videos.
+Vercel hosts a **static showcase copy** of the website. `vercel.json` publishes only the `static/` folder, and `.vercelignore` leaves out the Python code. The showcase has no server, so it can't make videos. When the page can't reach a server, it switches to showcase mode. A small banner explains this and the controls are turned off. **Recent videos** then lists a screen recording of the real app plus two sample videos from `static/samples/`, and clicking one plays it in the chat view.
 
 To host the real generator online, use the included `Dockerfile` on any Docker host, such as Render, Railway, a VPS, or a Hugging Face Space (Docker Spaces need HF PRO).
 
