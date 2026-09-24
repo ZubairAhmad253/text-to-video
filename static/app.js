@@ -16,7 +16,33 @@ const HINTS = {
 const HISTORY_KEY = "videos";
 const PLAY_ICON = '<svg viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></svg>';
 
+const PHOTO_CREDIT = "Photo: “Grosser Panda” by J. Patrick Fischer, CC BY-SA 3.0, via Wikimedia Commons.";
+// Videos made with this app, listed under Recent videos on the showcase copy (no server)
+const SAMPLES = [
+  {
+    text: "Screen recording: making a video with Photo to Video, start to finish.",
+    meta: "Demo recording · 1:15 · silent",
+    url: "samples/demo.mp4",
+    note: "A real session of the app running on a PC. Waiting time is sped up 6×.",
+  },
+  {
+    text: "The panda walks through the jungle, talking to a friend on a mobile phone.",
+    ratio: "16:9", quality: "720", voice: true, story: true,
+    image: "samples/panda-photo.jpg",
+    url: "samples/panda-story.mp4",
+    note: "AI wrote the story; scenes 1 and 5 were animated by AI. " + PHOTO_CREDIT,
+  },
+  {
+    text: "Meet the giant panda, the gentle giant of the bamboo forest. It spends up to fourteen hours a day eating. Say hello to the jungle's favourite snacker!",
+    ratio: "1:1", quality: "720", voice: true, story: false,
+    image: "samples/panda-photo.jpg",
+    url: "samples/panda-classic.mp4",
+    note: PHOTO_CREDIT,
+  },
+];
+
 let photo = null; // the attached File
+let showcase = false; // true on the static copy that has no server
 
 function el(tag, className, text) {
   const node = document.createElement(tag);
@@ -60,14 +86,16 @@ async function checkServer() {
 }
 
 function showcaseMode() {
+  showcase = true;
+  renderHistory();
   document.body.classList.add("showcase");
   $("showcase").hidden = false;
   for (const span of $("status").querySelectorAll("[data-key]")) span.classList.add("bad");
   $("box").classList.add("offline");
   textInput.disabled = true;
-  textInput.placeholder = "Showcase only: this site has no server, so it can't make videos. Watch the demo above.";
+  textInput.placeholder = "Showcase only: this site has no server, so it can't make new videos.";
   $("send").disabled = true;
-  $("fineprint").textContent = "This is a showcase copy. Run the project on your own PC to make videos.";
+  $("fineprint").textContent = "Showcase copy. Open a video under Recent videos to see what the app makes.";
 }
 
 checkServer()
@@ -205,6 +233,7 @@ function showWelcome(show) { $("welcome").hidden = !show; }
 function scrollToEnd() { requestAnimationFrame(() => { thread.scrollTop = thread.scrollHeight; }); }
 
 function describe(item) {
+  if (item.meta) return item.meta;
   const parts = [item.story ? "AI story" : "Classic", item.ratio, `${item.quality}p`];
   if (!item.voice) parts.push("no voice");
   return parts.join(" · ");
@@ -243,7 +272,7 @@ function addBotMessage() {
       fill.style.width = `${Math.max(2, progress)}%`;
       step.textContent = `${text} · ${progress}%`;
     },
-    done(url, notes = []) {
+    done(url, notes = [], { autoplay = false, note = "" } = {}) {
       msg.classList.remove("working");
       body.replaceChildren();
       body.append(el("p", "done-text", "Your video is ready."));
@@ -254,6 +283,7 @@ function addBotMessage() {
       video.preload = "metadata";
       body.append(video);
       if (notes.length) body.append(el("p", "warning notes", notes.join(" ")));
+      if (note) body.append(el("p", "video-note", note));
       const actions = el("div", "bot-actions");
       const download = el("a", "pill-btn primary", "Download MP4");
       download.href = url;
@@ -265,9 +295,11 @@ function addBotMessage() {
       const another = el("button", "pill-btn", "Make another");
       another.type = "button";
       another.addEventListener("click", () => textInput.focus());
-      actions.append(download, open, another);
+      actions.append(download, open);
+      if (!showcase) actions.append(another);
       body.append(actions);
       video.addEventListener("loadedmetadata", scrollToEnd, { once: true });
+      if (autoplay) video.play().catch(() => {}); // allowed: it follows the viewer's click
       scrollToEnd();
     },
     fail(message) {
@@ -289,21 +321,25 @@ function saveHistory(item) {
   try { localStorage.setItem(HISTORY_KEY, JSON.stringify(list)); } catch {}
   renderHistory();
 }
+// open a finished video in the thread (from Recent videos) and start playing it
+function openVideo(item, button) {
+  messages.replaceChildren();
+  showWelcome(false);
+  addUserMessage(item, item.image || null);
+  addBotMessage().done(item.url, [], { autoplay: true, note: item.note });
+  for (const b of $("history").querySelectorAll("button")) b.classList.toggle("active", b === button);
+  closeNav();
+}
+
 function renderHistory() {
   const list = $("history");
   list.replaceChildren();
-  for (const item of loadHistory()) {
+  for (const item of showcase ? SAMPLES : loadHistory()) {
     const button = el("button");
     button.type = "button";
     button.title = item.text;
     button.append(el("span", "h-title", item.text), el("span", "h-meta", describe(item)));
-    button.addEventListener("click", () => {
-      messages.replaceChildren();
-      showWelcome(false);
-      addUserMessage(item, null);
-      addBotMessage().done(item.url);
-      closeNav();
-    });
+    button.addEventListener("click", () => openVideo(item, button));
     const li = el("li");
     li.append(button);
     list.append(li);
@@ -311,9 +347,12 @@ function renderHistory() {
 }
 renderHistory();
 
+$("watch-demo").addEventListener("click", () => openVideo(SAMPLES[0], $("history").querySelector("button")));
+
 $("new-video").addEventListener("click", () => {
   messages.replaceChildren();
   showWelcome(true);
+  for (const b of $("history").querySelectorAll("button")) b.classList.remove("active");
   closeNav();
   textInput.focus();
 });
