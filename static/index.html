@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Photo to Video</title>
+  <link rel="stylesheet" href="style.css">
+  <script>
+    // apply the saved or system theme before the page paints, to avoid a flash
+    (function () {
+      var theme;
+      try { theme = localStorage.getItem("theme"); } catch (e) {}
+      if (theme !== "light" && theme !== "dark") {
+        theme = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      }
+      document.documentElement.dataset.theme = theme;
+    })();
+  </script>
+</head>
+<body>
+  <main class="card">
+    <header>
+      <div>
+        <h1>Photo to Video</h1>
+        <p class="sub">Upload a photo, write your text, get a narrated video.</p>
+      </div>
+      <button type="button" id="theme" class="theme-btn" aria-label="Switch between light and dark theme" title="Switch theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </button>
+    </header>
+
+    <div id="setup-warning" class="warning" hidden></div>
+
+    <form id="form">
+      <div class="step"><span class="num n1">1</span>Photo</div>
+      <label id="drop" class="drop">
+        <input type="file" id="image" name="image" accept="image/jpeg,image/png,image/webp" hidden>
+        <img id="preview" alt="Selected photo" hidden>
+        <span id="drop-hint">Click or drop a photo here<br><small>JPG, PNG or WebP · up to 15 MB</small></span>
+      </label>
+
+      <label class="step" for="text"><span class="num n2">2</span>Text</label>
+      <label class="toggle story-toggle"><input type="checkbox" name="story" id="story">
+        <span><strong>AI story mode</strong> · describe an idea and get a 30-second story. Two scenes are
+        animated by AI (free, takes about 5–8 minutes).</span></label>
+      <textarea id="text" name="text" rows="5" maxlength="2000"
+        placeholder="Each sentence becomes one scene with its own caption and voice-over."></textarea>
+      <div class="counter"><span id="count">0</span> / 2000</div>
+
+      <div class="step"><span class="num n3">3</span>Options</div>
+      <div class="options">
+        <fieldset class="pills">
+          <legend>Format</legend>
+          <label><input type="radio" name="ratio" value="9:16" checked><span>9:16 Reel</span></label>
+          <label><input type="radio" name="ratio" value="16:9"><span>16:9 YouTube</span></label>
+          <label><input type="radio" name="ratio" value="1:1"><span>1:1 Square</span></label>
+        </fieldset>
+        <div class="row">
+          <label class="field">Quality
+            <select name="quality">
+              <option value="720">720p (faster)</option>
+              <option value="1080">1080p</option>
+            </select>
+          </label>
+          <label class="field">Captions
+            <select name="style">
+              <option value="bold">Bold outline</option>
+              <option value="box">Dark box</option>
+              <option value="minimal">Minimal</option>
+            </select>
+          </label>
+        </div>
+        <label class="toggle"><input type="checkbox" name="voice" checked> Voice-over</label>
+      </div>
+
+      <button type="submit" id="submit" class="btn">Generate video</button>
+    </form>
+
+    <section id="progress" hidden>
+      <div class="bar"><div id="bar-fill"></div></div>
+      <p id="step-text">Starting…</p>
+    </section>
+
+    <section id="result" hidden>
+      <video id="video" controls playsinline></video>
+      <p id="notes" class="warning" hidden></p>
+      <div class="actions">
+        <a id="download" class="btn" download>Download MP4</a>
+        <button id="again" type="button" class="btn secondary">Make another</button>
+      </div>
+    </section>
+
+    <p id="error" class="error" hidden></p>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

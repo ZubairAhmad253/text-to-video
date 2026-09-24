@@ -1,0 +1,7 @@
+venv/
+__pycache__/
+uploads/
+outputs/
+voices/*.onnx
+voices/*.onnx.json
+hf_token.txt
