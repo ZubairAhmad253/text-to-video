@@ -25,7 +25,11 @@ Double-click **`run.bat`**. It opens http://localhost:8000 in your browser. Keep
 
 With `run.bat` running, double-click **`share.bat`**. It prints a public link like `https://something.trycloudflare.com` that anyone can open. The link works only while your PC, `run.bat` and the `share.bat` window are all on. You get a new link each time you start it.
 
-This app can't be hosted on Vercel, because it needs a server that keeps running along with FFmpeg and Ollama. To host it properly, use the included `Dockerfile` on any Docker host, such as Render, Railway, a VPS, or a Hugging Face Space (Docker Spaces need HF PRO).
+## Showcase site (Vercel, free)
+
+Vercel hosts a **static showcase copy** of the website. `vercel.json` publishes only the `static/` folder, and `.vercelignore` leaves out the Python code. The showcase has no server, so it can't make videos. When the page can't reach a server, it switches to showcase mode: a banner explains this, the controls are turned off, and a screen recording of the real app (`static/samples/demo.mp4`) plays along with sample videos.
+
+To host the real generator online, use the included `Dockerfile` on any Docker host, such as Render, Railway, a VPS, or a Hugging Face Space (Docker Spaces need HF PRO).
 
 ## How it works
 

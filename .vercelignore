@@ -1,0 +1,8 @@
+# Vercel only hosts the showcase website (static/). The video server runs on the creator's PC.
+backend/
+requirements.txt
+Dockerfile
+start.sh
+.dockerignore
+*.py
+*.bat
