@@ -5,6 +5,9 @@ import urllib.request
 
 from .config import OLLAMA_URL, STORY_MODEL, STORY_SCENES
 
+MIN_STORY_WORDS = 70  # about 27+ seconds of narration with the Piper voice
+STORY_ATTEMPTS = 2
+
 SCHEMA = {
     "type": "object",
     "properties": {
@@ -47,7 +50,26 @@ def ollama_available() -> bool:
 
 
 def write_story(idea: str) -> list[dict]:
-    """Return [{"narration": ..., "action": ...}, ...], one entry per scene."""
+    """Return [{"narration": ..., "action": ...}, ...], one entry per scene.
+
+    The small model sometimes writes very short sentences, which makes the video much shorter
+    than 30 seconds, so a short story is rewritten (up to STORY_ATTEMPTS tries, longest kept).
+    """
+    best: list[dict] = []
+    for _ in range(STORY_ATTEMPTS):
+        scenes = _ask_for_story(idea)
+        if _word_count(scenes) > _word_count(best):
+            best = scenes
+        if _word_count(best) >= MIN_STORY_WORDS:
+            break
+    return best
+
+
+def _word_count(scenes: list[dict]) -> int:
+    return sum(len(s["narration"].split()) for s in scenes)
+
+
+def _ask_for_story(idea: str) -> list[dict]:
     body = {
         "model": STORY_MODEL,
         "messages": [{"role": "user", "content": PROMPT.format(idea=idea, n=STORY_SCENES)}],

@@ -51,7 +51,7 @@ def generate(job_dir: Path, image_path: Path, text: str, ratio: str, quality: st
     audio_path = None
 
     if story:
-        progress(0.01, "Writing the story (about 1 minute)")
+        progress(0.01, "Writing the story (1–2 minutes)")
         story_scenes = write_story(text)
         scenes = [s["narration"] for s in story_scenes]
         # shares of the progress bar: story 10%, voice 10%, AI clips 55%, render 25%

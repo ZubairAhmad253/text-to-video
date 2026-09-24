@@ -45,10 +45,34 @@ $("menu").addEventListener("click", () => document.body.classList.toggle("nav-op
 $("scrim").addEventListener("click", closeNav);
 
 // ---------- server status ----------
+// Run locally (run.bat), the video server is this same site. The static showcase copy on Vercel
+// has no server, so the page switches to showcase mode: a demo recording and sample videos.
 
-fetch("/api/health")
-  .then((r) => r.json())
+const API = "";
+
+async function checkServer() {
+  try {
+    const res = await fetch(`${API}/api/health`, { cache: "no-store" });
+    return res.ok ? await res.json() : null;
+  } catch {
+    return null;
+  }
+}
+
+function showcaseMode() {
+  document.body.classList.add("showcase");
+  $("showcase").hidden = false;
+  for (const span of $("status").querySelectorAll("[data-key]")) span.classList.add("bad");
+  $("box").classList.add("offline");
+  textInput.disabled = true;
+  textInput.placeholder = "Showcase only: this site has no server, so it can't make videos. Watch the demo above.";
+  $("send").disabled = true;
+  $("fineprint").textContent = "This is a showcase copy. Run the project on your own PC to make videos.";
+}
+
+checkServer()
   .then((health) => {
+    if (!health) return showcaseMode();
     for (const span of $("status").querySelectorAll("[data-key]")) {
       span.classList.add(health[span.dataset.key] ? "ok" : "bad");
     }
@@ -334,7 +358,7 @@ form.addEventListener("submit", async (e) => {
   onTextChange();
 
   try {
-    const res = await fetch("/api/generate", { method: "POST", body: data });
+    const res = await fetch(`${API}/api/generate`, { method: "POST", body: data });
     if (!res.ok) throw new Error(await readError(res));
     const { job_id } = await res.json();
     poll(job_id, bot, item);
@@ -345,13 +369,14 @@ form.addEventListener("submit", async (e) => {
 
 async function poll(jobId, bot, item) {
   try {
-    const res = await fetch(`/api/status/${jobId}`);
+    const res = await fetch(`${API}/api/status/${jobId}`);
     if (!res.ok) throw new Error(await readError(res));
     const job = await res.json();
     if (job.status === "error") throw new Error(job.error || "Video generation failed.");
     if (job.status === "done") {
-      bot.done(job.video_url, job.notes);
-      saveHistory({ ...item, url: job.video_url, date: Date.now() });
+      const url = `${API}${job.video_url}`;
+      bot.done(url, job.notes);
+      saveHistory({ ...item, url, date: Date.now() });
       return;
     }
     bot.update(job.progress, job.step);
